@@ -1,3 +1,4 @@
+@if(Auth::check())
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,24 +25,29 @@
 		.profile_ul > li > button{
 			border-radius: 12px;
 		}
+		.panel-body > ul.profile_ul > li > form > .btn-info:hover{
+			background-color: red;
+
+		}
 		</style>
 </head>
 <body>
-<!-- <div class="container"> -->
+
 	<div class="row" style="margin-right: 0;">
 		<div class="col-md-2" style="padding: 0;padding-left: 30px;">
 			@yield("left_sidebar")
 		</div>
 		<div class="col-md-8">
-			<!-- <div class="col-md-8 col-md-offset-2"> -->
+			
 			@yield("main_content")
-			<!-- </div> -->
+			
 		</div>
 		<div class="col-md-2" style="padding: 0;">
 			@yield("right_sidebar")
 		</div>
 	</div>
-<!-- </div> -->
+
 
 </body>
 </html>
+@endif

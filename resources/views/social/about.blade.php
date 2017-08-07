@@ -36,9 +36,7 @@
 		<td class="col-md-1"></td>
 		<td class="col-md-11">
 			<input type="submit" name="save" value="Save" class="btn btn-info">
-
-			<!-- <button class="btn btn-info">Cancel</button>
- -->		</td>
+		</td>
 
 	</tr>
 	</form>

@@ -3,7 +3,7 @@
 @section("profile_section")
 	
 	<table>
-		<!-- <h1>Friends</h1> -->
+		
 		@foreach($friends as $friend)
 		<tr>
 			<td class="col-md-4">

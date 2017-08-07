@@ -37,7 +37,7 @@
 			<tr>
 				<td>
 					<button class="btn btn-success" type="submit">Save</button>
-					<!-- <button class="btn btn-info" type="submit">cancel</button> -->
+					
 				</td>
 			</tr>
 		</table>
@@ -46,7 +46,6 @@
 
 @endsection
 
-<!-- @extends("layouts.app") -->
 
 
 

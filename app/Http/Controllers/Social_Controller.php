@@ -104,7 +104,7 @@ class Social_Controller extends Controller
     }
     function showProfile($id){
     $accounts = User::find($id);
-    $posts = Post::all();
+    $posts = Post::orderBy('id','desc')->get();
     $pending_requests = Auth::user()->pendingRequests();
     $friends = Auth::user()->friends();
     $connections = Auth::user()->myRequests->merge(Auth::user()->theirRequests);
@@ -141,9 +141,12 @@ class Social_Controller extends Controller
         Auth::user()->acceptRequest($id);
         return back();   
      }
+     function unfriend($id){
+        Auth::user()->unfriend($id);
+        return back();
+     }
      function showFriends($id){
         $accounts = User::find($id);
-        // $accounts = User::find($id);
         $friends = $accounts->friends();
         $pending_requests = Auth::user()->pendingRequests();
         $connections = Auth::user()->myRequests->merge(Auth::user()->theirRequests);
@@ -161,6 +164,16 @@ class Social_Controller extends Controller
     $unlike->delete();
     return back();
     }
+    function deletePost(Request $request){
+        $deletePost = Post::where('id',$request->id)->where('user_id',Auth::user()->id)->first();
+        $deletePost->delete();
+        return back();
+    }
+    function deleteComment(Request $request){
+        $deleteComment = Comment::where('id',$request->id)->first();
+        $deleteComment->delete();
+        return back();
+    }
     function addcomment(Request $request){
         $new_comment = new Comment();
         $new_comment->user_id = Auth::user()->id;
@@ -168,16 +181,12 @@ class Social_Controller extends Controller
         $new_comment->comment = $request->content;
 
         $new_comment->save();
-        // dd($new_comment);
         $post = Post::find($request->id);
         $comments = Post::find($request->id)->comments()->orderBy('id','desc')->get();
         $accounts = User::all();
 
         return view('social.commentbox',compact('comments','accounts','post'));
     }
-    // function showComment(){
-    //     $comments = Comment::all();
-    //     return back();
-    // }
-}
+
+   }
 

@@ -54,6 +54,10 @@ class User extends Authenticatable
     function declineRequest($id){
         $this->theirRequests()->detach($id);
     }
+    function unfriend($id){
+        $this->myRequests()->detach($id);
+        $this->theirRequests()->detach($id);
+    }
     function likes(){
         return $this->hasMany('App\Like');
     }

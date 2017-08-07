@@ -2,7 +2,7 @@
 
 
 @section("main_content")
-	
+	@if(Auth::check())
 	<div class="col-md-12">
 
 		<div class="panel-group" style="margin-bottom: 10%;">
@@ -26,9 +26,9 @@
 						<li>
 							<a href='{{url("friends/$accounts->id")}}'>Friends</a>
 						</li>
-						<li>
+						<!-- <li>
 							<a href="#">Likes</a>
-						</li>
+						</li> -->
 						@if (Auth::user()->id == $accounts->id)
 						<li style="margin-left: 30%;">
 							<button type="button" data-toggle='modal' data-target="#myModal" class="btn btn-default" style="margin-bottom: 10px;">Edit Profile</button>
@@ -42,11 +42,11 @@
 						<button class="btn btn-default" style="position: absolute;bottom: 10px;right: 10px;">Add As Friend</button>
 						</form>
 						</li>
-						@elseif(Auth::user()->id != $accounts->id && $connections->contains($accounts->id) == $friends->contains($accounts->id))
+						@elseif(Auth::user()->id != $accounts->id && $connections->contains($accounts->id) && $friends->contains($accounts->id))
 						<li>
-						<form method="POST" action='{{"#"}}'>
+						<form method="POST" action='{{"/unfriend/$accounts->id"}}'>
 						{{csrf_field() }}
-						<button class="btn btn-info" style="position: absolute;bottom: 10px;right: 10px;">Friends <span class="fa fa-check"></span><span class="fa fa-check"></span></button>
+						<button id="friend" class="btn btn-info" style="position: absolute;bottom: 10px;right: 10px;">Friends <span class="fa fa-check"></span><span class="fa fa-check"></span></button>
 						</form>
 						</li>
 						@elseif(Auth::user()->id != $accounts->id && $pending_requests->contains($accounts->id))
@@ -105,10 +105,6 @@
 									</tr>
 									<tr>
 										<td>
-											<!-- <button class="btn btn-success" type="submit">Save</button>
-											<button class="btn btn-info" type="submit">cancel</button> -->
-										</td>
-										<td>
 											<button class="btn btn-success" type="submit">Save</button>
 											<button class="btn btn-info">cancel</button>
 										</td>
@@ -131,31 +127,16 @@
 
 	</div>
 
-
+@endif
 
 @endsection
 
 @section("right_sidebar")
-<!-- 	<div class="panel-group">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<span class="col-md-9" style="font-size: 12px;padding: 0;">
-					Friend Request
-				</span>
-				<span class="col-md-3
-				" style="font-size: 12px;padding: 0;">
-					<a href="#">See All </a>
-				</span>
-			</div>
-			<div class="panel-body">
-				
-			</div>
-		</div>
-	</div> -->
 
 @endsection
 
 @section("left_sidebar")
+@if(Auth::check())
 	<h4>{{$accounts->name}}</h4>
 	@if(!empty($accounts->birthday))
 	<span>Born on <strong>{{$accounts->birthday}}</strong></span><br>
@@ -169,7 +150,7 @@
 	@if(!empty($accounts->bio))
 	<p>{{$accounts->bio}}</p>
 	@endif
-
+@endif
 
 @endsection
 

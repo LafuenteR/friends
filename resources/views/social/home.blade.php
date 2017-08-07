@@ -9,12 +9,15 @@
 				<form class="form-inline" method="POST" action='{{url("/home")}}' enctype="multipart/form-data">
 					{{csrf_field()}}
 					<div class="form-group" style="background-color: white; width: 100%;">
-					<input type="text" name="description" placeholder="POST....." class="form-control" style="width: 100%;">
-					
+					<div class="col-md-12" style="padding: 0;">
+						<input type="text" name="description" placeholder="Say something..." class="form-control" style="width: 100%;padding-right: 0;">
+					</div>
+					<div class="col-md-12" style="padding-left: 0;">
 					<input type="file" name="img" style="width: 100%;">
-					
-					
-					<input type="submit" name="post" value="Post" class="btn btn-primary">	
+					</div>
+					</div>
+					<div class="col-md-offset-10">
+						<input type="submit" name="post" value="Post" class="btn btn-primary" style="width: 100%;">	
 					</div>			
 				</form>
 			</div>
@@ -23,8 +26,8 @@
 	</div>
 		@foreach ($posts as $post)
 		@if($friends->contains($post->user_id) || (Auth::user()->id) == ($post->user_id))
-			<div class="col-md-8 col-md-offset-2">
-		<div class="panel-group">
+	<div class="col-md-8 col-md-offset-2">
+		<div class="panel-group" id="post{{$post->id}}">
 			<div class="panel panel-default">
 
 				<div class="panel-body" style="position: relative;">
@@ -33,43 +36,56 @@
 					</div>
 					<div class="col-md-11 dropdown">
 						<a href='{{"/profile/$post->user_id"}}' style="margin-bottom: 0;">{{$post->user->name}}</a>
+						@if($post->user_id == Auth::user()->id)
 						<a  class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="position: absolute; right: 0;border-color:transparent; color: #3097d1;">
    						<span class="caret"></span></a>
+   						@endif
    						<ul class="dropdown-menu" style="position: absolute;left: 65%; width: 50px;">
-					      <li ><a href="#">Edit</a></li>
-					      <li><a href="#">Delete</a></li>
+					      <!-- <li ><a href="#">Edit</a></li> -->
+					      <li><a role="button" id="deletePost{{$post->id}}" onclick="deletePost({{$post->id}});">Delete</a></li>
 					    </ul>
 						<p style="font-size: 10px;">{{$post->created_at->diffForHumans()}}</p>
 
 					</div>
+					
 					<div class="col-md-12" style="padding-left: 0;">
 						
 						<p>{{$post->description}}</p>
 						@if (!empty($post->img))
-						<div style="text-align: center;">
+						<div style="text-align: center;padding-bottom: 5px;">
 						<img src='{{asset("$post->img")}}' style="width:100%;">
 						</div>
 						@endif
-												
+						@if(count($post->likes) != 0)
+						<div class="likeCount{{$post->id}} col-md-6" style="padding-left: 0;font-size: 10px;">
+							{{count($post->likes)}} Like
+						</div>	
+						@endif
+						@if(count($post->comments) != 0)
+						<div class="col-md-6" style="padding-left: 0;font-size: 10px;">
+							{{count($post->comments)}} Comments
+						</div>
+						@endif
+						@if((count($post->comments) > 0) || (count($post->likes) > 0)) 
+						<br>
+						@endif
 						<hr style="margin: 10px 0px ;">
-						@if(!Auth::user()->likes()->where('post_id',$post->id)->first())		 				<a role="button" name="like" onclick="like({{$post->id}});" id="like{{$post->id}}">Like</a>
+						@if(!Auth::user()->likes()->where('post_id',$post->id)->first())		 				
+						<a role="button" name="like" onclick="like({{$post->id}});" id="like{{$post->id}}" class="col-md-6" style="padding-left: 0;">Like</a>
 						@else
-		 					<a role="button" name="unlike" onclick="like({{$post->id}});" id="like{{$post->id}}">Unlike</a>
+		 					<a role="button" name="unlike" onclick="like({{$post->id}});" id="like{{$post->id}}" class="col-md-6" style="padding-left: 0;">Unlike</a>
 		 				@endif
-		 				<!-- <span style="margin-left: 20px;"> -->
-		 					<a role="button" name="comment" id="comment{{$post->id}}" onclick="comment({{$post->id}})" style="margin-left: 10%;">Comment</a>
-		 				<!-- </span> -->
-		 				<!-- <form id="form{{$post->id}}" style="display: none;"> -->
+		 					<a role="button" name="comment" id="comment{{$post->id}}" onclick="comment({{$post->id}})" class="col-md-6" style="padding-left: 0;">Comment</a>
+		 				
 		 				<div class="form{{$post->id}}" style="display: none;">
-		 					<input id="form{{$post->id}}" type="text" name="commentEnter" class="col-md-12 commentEnter">
-		 					<div id="commentBox">
+		 					<input id="form{{$post->id}}" type="text" name="commentEnter" class="col-md-12 commentEnter" placeholder="Enter a Comment...">
+		 					<div id="commentBox{{$post->id}}">
 		 						@include("social.commentbox")
 		 					</div>
 		 					
 		 				</div>
 		 					<input type="hidden" id="token" value="{{csrf_token()}}">
-		 					<!-- <input type="submit" name="Enter" class="col-md-3"> -->
-		 				<!-- </form> -->
+		 					
 						</div>
 				</div>
 				
@@ -79,9 +95,9 @@
 			@endforeach
 			<script type="text/javascript">
 			 function like(id){
-			 	// alert(id);
+			 	
 			 		var token = '{{ csrf_token() }}';
-			 		// alert(token);
+			 		
 			if($('#like'+id).attr('name')=='like'){ 
 			 	$.post('/like',{
 			 		_token : token,
@@ -89,6 +105,7 @@
 			 	},function(data){
 			 		$('#like'+id).attr('name','unlike');
 			 		$('#like'+id).html('Unlike');
+			 		
 			 	});
 			 } 
 			 else {
@@ -105,7 +122,7 @@
 }
 			function comment(id){
 				$('.form'+id).toggle();
-				// $('#comment'+id).toggle();
+				
 			}
 			$('.commentEnter').keypress(function(event){
 				console.log("hello")
@@ -113,10 +130,10 @@
 				var comment_value = $(id).val();
 
 				var token = $('#token').val();
-				// alert(comment_value);
+				
 				if(event.keyCode == 13){
 					var content = this.value;
-					// alert(content);
+					
 					$.ajax({
 						url: '/addComment',
 						method: "POST",
@@ -126,7 +143,7 @@
 						content : content
 						},
 						success: function(data){
-							$('#commentBox').html(data);
+							$('#commentBox'+id).html(data);
 							$('.commentEnter').val("");
 							console.log(data);
 						},
@@ -138,9 +155,35 @@
 
 				}
 			});
-											
+			function deletePost(id){
+				
+				var token = '{{ csrf_token() }}';
+				
+				$.post('/deletePost',{
+					_token :token,
+					id : id,
+					
+				},function(data){
+
+				$('#post'+id).css('display','none');
+				});
+			}
+			function deleteComment(id){
+				var token = '{{ csrf_token ()}}';
+				$.post('/deletecomment',{
+					_token : token,
+					id : id,
+				},function(data){
+					$('.deleteComment'+id).css('display','none');
+				});
+			}				
 				
 			</script>
+			@else
+			<h1>Hello</h1>
+			<h1>Hello</h1>
+			<h1>Hello</h1>
+			<h1>Hello</h1>
 			@endif
 
 @endsection
@@ -156,7 +199,7 @@
 				</span>
 				<span class="col-md-3
 				" style="font-size: 12px;padding: 0;">
-					<a href="#">See All </a>
+					
 				</span>
 			</div>
 			<div class="panel-body">
@@ -169,14 +212,8 @@
 				<td class="col-md-3" style="padding-left: 0;padding-right: 0;">
 					<img src="{{$pending->avatar}}" style="width: 30px;height: 30px;margin-bottom: 10px;" class="img-circle">	
 				</td>
-				<td class="col-md-7">
+				<td class="col-md-7" style="padding-left: 0;">
 					<a href= '{{"/profile/$account->id"}}'>{{$pending->name}}</a>	
-				</td>
-				<td class="col-md-1">
-					<span class="fa fa-check"></span>
-				</td>
-				<td class="col-md-1">
-					<span class="fa fa-times"></span>
 				</td>
 			</tr>
 			@endif
@@ -190,7 +227,24 @@
 
 @endsection
 
+@section("left_sidebar")
+@if(Auth::check())
 
+	<h4>{{Auth::user()->name}}</h4>
+	@if(!empty(Auth::user()->birthday))
+	<span>Born on <strong>{{Auth::user()->birthday}}</strong></span><br>
+	@endif
+	@if(!empty(Auth::user()->address))
+	<span>Lives in <strong>{{Auth::user()->address}}</strong></span><br>
+	@endif
+	@if(!empty(Auth::user()->contact))
+	<span>Mobile <strong>{{Auth::user()->contact}}</strong></span><br>
+	@endif
+	@if(!empty(Auth::user()->bio))
+	<p>{{Auth::user()->bio}}</p>
+	@endif
+	@endif
+@endsection
 @extends('layouts.app')
 
 

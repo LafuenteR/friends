@@ -15,15 +15,9 @@
 			<a href='{{url("/profile/$account->id")}}'>
 				<span>{{$account->name}}</span>
 			</a><br>
-			<span>Mutual</span>
+			
 		</td>
-		<!-- <td class="col-md-4">
-			@if(Auth::user()->id != $account->id)
-			<button>Add Me</button>
-			@endif
-
-		</td> -->
-
+	
 	</tr>
 	
 	@endforeach

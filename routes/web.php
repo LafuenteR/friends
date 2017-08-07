@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/', function () {
-	return view('social.home')
+	return view('auth.register')
 	;
 	// echo "Hello World";
 });
@@ -69,7 +69,13 @@ Route::post('/like','Social_Controller@like');
 
 Route::post('/unlike','Social_Controller@unlike');
 
+Route::post('/unfriend/{id}','Social_Controller@unfriend');
+
 Route::post('/addComment','Social_Controller@addcomment');
+
+Route::post('/deletecomment','Social_Controller@deleteComment');
+
+Route::post('/deletePost','Social_Controller@deletePost');
 
 // Route::post('/profile/{id}','Social_controller@addForm');
 

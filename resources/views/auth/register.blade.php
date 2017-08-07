@@ -1,11 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container" style="background-image: url('uploads/profile.png');">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Register</div>
+                <div class="panel-heading" style="text-align: center;">
+                    <h1>Welcome to Click</h1>
+                    <p>Make friends and Make Memories</p>
+                </div>
                 <div class="panel-body">
                     <form class="form-horizontal" method="POST" action="{{ route('register') }}">
                         {{ csrf_field() }}
